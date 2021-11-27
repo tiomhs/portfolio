@@ -3,11 +3,9 @@
   margin: 0;
   color: aliceblue;
 }
-
 body {
   background-color: #14141e;
 }
-
 #jumbotron {
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(img/jmbbg.png);
   background-repeat: no-repeat;
@@ -16,19 +14,24 @@ body {
   width: 100%;
   height: 100vh;
 }
-
 .navfont {
   font-size: 20px;
 }
-
 .nama {
   margin-top: 15vh;
 }
-
 #sekolah {
   background-color: #27262e;
 }
-
 #contact {
   background-color: #27262e;
+}
+.ayam {
+  color: black;
+}
+.ayam2 {
+  color: white;
+}
+footer {
+  background-color: #14141e;
 }
