@@ -1,0 +1,32 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+.jumbo {
+  min-height: 700px;
+  background-image: url('../img/bg.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#aboutme,
+#myskills,
+#projects {
+  background-color: #010103;
+}
+
+.hiro {
+  margin-top: 150px;
+}
+
+#myskills {
+  height: 300px;
+}
+
+.aboutme {
+  min-height: 500px;
+}
+
+/* <iframe src="https://giphy.com/embed/M9kzInOzNxFs68P3fH" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/greatbigstory-moon-sky-night-M9kzInOzNxFs68P3fH">via GIPHY</a></p> */
