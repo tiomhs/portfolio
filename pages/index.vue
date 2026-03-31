@@ -9,6 +9,11 @@ const experiences = [
   { role: "Anggota Research & Development", company: "UKM PROGRESS", year: "2025 \u2013 2026", desc: "Berkontribusi dalam riset pengembangan sistem dan IoT." },
   { role: "CMS & Back-End Developer", company: "PT. Asanka", year: "2023 \u2013 2025", desc: "Membangun sistem CMS dan mengoptimalkan performa backend." }
 ];
+
+const education = [
+  { role: "S1 Sistem Informasi", company: "ITB STIKOM Bali", year: "2023 \u2013 Sekarang", desc: "Mempelajari analisis, pengembangan, dan kepemimpinan dalam teknologi informasi." },
+  { role: "Rekayasa Perangkat Lunak (RPL)", company: "SMK Negeri 1 Denpasar", year: "2020 \u2013 2023", desc: "Mempelajari rekayasa, basis data, dan praktik terbaik dalam pengembangan aplikasi perangkat lunak." }
+];
 </script>
 
 <template>
@@ -95,6 +100,35 @@ const experiences = [
               </div>
               <p class="text-blue-400 font-medium mb-3">{{ exp.company }}</p>
               <p class="text-slate-400 text-sm leading-relaxed">{{ exp.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education Section -->
+    <section class="mt-16">
+      <div class="flex items-center justify-between mb-10">
+        <h2 class="text-2xl font-bold text-white">Riwayat Pendidikan</h2>
+        <div class="h-px bg-gradient-to-r from-slate-800 to-transparent flex-grow ml-6"></div>
+      </div>
+      
+      <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-800 before:to-transparent">
+        <div v-for="(edu, index) in education" :key="'edu-'+index" class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+          <!-- Timeline point -->
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-slate-950 bg-slate-800 text-slate-500 group-hover:text-blue-500 group-hover:border-blue-500/30 transition-colors shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+            <div class="w-2 h-2 rounded-full bg-current"></div>
+          </div>
+          
+          <!-- Card -->
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-1 rounded-2xl bg-gradient-to-b from-slate-800/50 to-transparent group-hover:from-blue-600/20 transition-all duration-300">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 h-full shadow-lg hover:shadow-blue-900/10 transition-shadow">
+              <div class="flex flex-col xl:flex-row xl:items-start justify-between gap-2 mb-2">
+                <h3 class="font-bold text-xl text-white">{{ edu.role }}</h3>
+                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 w-fit shrink-0">{{ edu.year }}</span>
+              </div>
+              <p class="text-blue-400 font-medium mb-3">{{ edu.company }}</p>
+              <p class="text-slate-400 text-sm leading-relaxed">{{ edu.desc }}</p>
             </div>
           </div>
         </div>
