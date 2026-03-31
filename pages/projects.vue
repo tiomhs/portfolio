@@ -1,41 +1,5 @@
 <script setup>
-const webApps = [
-  {
-    title: "Pemira.co.id",
-    subtitle: "Platform E-Voting",
-    role: "Front-End & Back-End Developer",
-    stack: ["NestJS", "Next.js", "Vue.js", "Tailwind CSS"],
-    desc: "Platform pemungutan suara digital berskala kampus untuk memfasilitasi pemilihan Presiden & Wakil Presiden Mahasiswa secara aman, real-time, dan transparan."
-  },
-  {
-    title: "Tixgro.com",
-    subtitle: "Ticketing Management",
-    role: "Front-End & Back-End Developer",
-    stack: ["Laravel", "Livewire", "Tailwind CSS", "Midtrans", "Xendit"],
-    desc: "Platform manajemen tiket komprehensif yang memfasilitasi pembelian, penukaran tiket, hingga event check-in terintegrasi dengan berbagai payment gateway."
-  },
-  {
-    title: "Membership Dreamy",
-    subtitle: "Sistem Manajemen MLM",
-    role: "Front-End & Back-End Developer",
-    stack: ["Laravel", "Livewire", "MySQL"],
-    desc: "Sistem manajemen keanggotaan berbasis Multi-Level Marketing (MLM) dengan kalkulasi pencapaian dan distribusi bonus otomatis secara rekursif antar level jaringan."
-  },
-  {
-    title: "Radio Streaming Web",
-    subtitle: "Aplikasi Real-time Broadcasting",
-    role: "Full-Stack & DevOps",
-    stack: ["NuxtJS", "Vue.js", "Express.js"],
-    desc: "Aplikasi web berbasis streaming stasiun radio real-time yang dirancang agar terintegrasi dengan OBS dan mendukung siaran interaktif."
-  }
-];
-
-const cmsProjects = [
-  "Cat & Sashimi Studio (Web Dev & UI/UX)",
-  "Ubud Wellness Bali (Web Dev)",
-  "Asanka Corporate & Digital (Web Dev)",
-  "Muktamar Peraboi 2025 (Web Dev)"
-];
+const { webApps, cmsProjects } = useProjects();
 </script>
 
 <template>
@@ -56,9 +20,14 @@ const cmsProjects = [
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div v-for="(project, index) in webApps" :key="index" class="group p-1 rounded-2xl bg-gradient-to-b from-slate-800/50 to-transparent hover:from-blue-600/30 transition-all duration-300">
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 md:p-8 h-full shadow-lg group-hover:shadow-blue-900/20 transition-all flex flex-col">
-            <div class="mb-4">
+        <NuxtLink :to="`/projects/${project.slug}`" v-for="project in webApps" :key="project.slug" class="group p-1 rounded-2xl bg-gradient-to-b from-slate-800/50 to-transparent hover:from-blue-600/30 transition-all duration-300 block">
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 md:p-8 h-full shadow-lg group-hover:shadow-blue-900/20 transition-all flex flex-col relative overflow-hidden">
+            <!-- Arrow icon for interaction affordance -->
+            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300 text-blue-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </div>
+            
+            <div class="mb-4 pr-8">
               <h3 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">{{ project.title }}</h3>
               <p class="text-blue-500 font-medium text-sm mt-1 mb-4">{{ project.subtitle }}</p>
               <p class="text-slate-300 leading-relaxed">{{ project.desc }}</p>
@@ -76,7 +45,7 @@ const cmsProjects = [
               </div>
             </div>
           </div>
-        </div>
+        </NuxtLink>
       </div>
     </section>
 
