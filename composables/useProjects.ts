@@ -35,14 +35,42 @@ export const useProjects = () => {
   ];
 
   const cmsProjects = [
-    "Cat & Sashimi Studio (Web Dev & UI/UX)",
-    "Ubud Wellness Bali (Web Dev)",
-    "Asanka Corporate & Digital (Web Dev)",
-    "Muktamar Peraboi 2025 (Web Dev)"
+    {
+      slug: "cat-sashimi-studio",
+      title: "Cat & Sashimi Studio",
+      subtitle: "Web Dev & UI/UX",
+      role: "Web Developer",
+      stack: ["WordPress", "PHP", "Tailwind CSS"],
+      desc: "Pengembangan website perusahaan dan desain antarmuka pengguna untuk Cat & Sashimi Studio, menitikberatkan pada estetika visual dan pengalaman navigasi interaktif."
+    },
+    {
+      slug: "ubud-wellness-bali",
+      title: "Ubud Wellness Bali",
+      subtitle: "Web Dev",
+      role: "Web Developer",
+      stack: ["WordPress", "Elementor", "SEO"],
+      desc: "Sistem web publik untuk lini bisnis asri Ubud Wellness di Bali, menyajikan profil layanan kesehatan komprehensif yang dirancang khusus untuk kenyamanan turis internasional."
+    },
+    {
+      slug: "asanka-corporate",
+      title: "Asanka Corporate & Digital",
+      subtitle: "Web Dev",
+      role: "Web Developer",
+      stack: ["WordPress", "PHP", "MySQL"],
+      desc: "Pengembangan web korporat dinamis bagi Asanka, menangani kompleksitas integrasi sistem profil perusahaan beserta optimasi performa backend."
+    },
+    {
+      slug: "muktamar-peraboi-2025",
+      title: "Muktamar Peraboi 2025",
+      subtitle: "Web Dev",
+      role: "Web Developer",
+      stack: ["Laravel", "Tailwind CSS", "MySQL"],
+      desc: "Pengembangan platform pendaftaran dan publikasi berbasis web untuk event akbar Muktamar Peraboi 2025, yang memfasilitasi ribuan peserta medis dalam satu sistem terpusat."
+    }
   ];
 
   const getProjectBySlug = (slug: string) => {
-    return webApps.find(project => project.slug === slug);
+    return webApps.find(project => project.slug === slug) || cmsProjects.find(project => project.slug === slug);
   };
 
   return {
