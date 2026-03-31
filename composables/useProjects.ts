@@ -2,7 +2,7 @@ export const useProjects = () => {
   const webApps = [
     {
       slug: "pemira-co-id",
-      title: "Pemira.co.id",
+      title: "pemira.dpm-itbstikombali.id",
       subtitle: "Platform E-Voting",
       role: "Front-End & Back-End Developer",
       stack: ["NestJS", "Next.js", "Vue.js"],
@@ -10,7 +10,7 @@ export const useProjects = () => {
     },
     {
       slug: "tixgro-com",
-      title: "Tixgro.com",
+      title: "tixgro.com",
       subtitle: "Ticketing & Event Management",
       role: "Front-End & Back-End Developer",
       stack: ["Laravel", "Livewire", "Tailwind CSS", "Alpine.js"],
