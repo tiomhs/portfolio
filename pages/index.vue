@@ -1,19 +1,41 @@
 <script setup>
-const skills = [
+const supabase = useSupabaseClient()
+
+// Nilai default jika database Supabase belum diisi / error
+const defaultSkills = [
   "Laravel", "NestJS", "Express.js", "CodeIgniter", "Vue.js", "React.js", "NuxtJS", "Next.js", "Tailwind CSS", "WordPress"
 ];
 
-const experiences = [
+const defaultExperiences = [
   { role: "Ketua Umum", company: "UKM PROGRESS", year: "2026 \u2013 Sekarang", desc: "Memimpin pergerakan dan inovasi riset teknologi di lingkungan kampus." },
   { role: "Back-End & Front-End Developer", company: "PT. Gretiva", year: "2025 \u2013 Sekarang", desc: "Mengembangkan solusi web kompleks dan mengintegrasikan API pihak ketiga." },
   { role: "Anggota Research & Development", company: "UKM PROGRESS", year: "2025 \u2013 2026", desc: "Berkontribusi dalam riset pengembangan sistem dan IoT." },
   { role: "CMS & Back-End Developer", company: "PT. Asanka", year: "2023 \u2013 2025", desc: "Membangun sistem CMS dan mengoptimalkan performa backend." }
 ];
 
-const education = [
+const defaultEducation = [
   { role: "S1 Sistem Informasi", company: "ITB STIKOM Bali", year: "2023 \u2013 Sekarang", desc: "Mempelajari analisis, pengembangan, dan kepemimpinan dalam teknologi informasi." },
   { role: "Rekayasa Perangkat Lunak (RPL)", company: "SMK Negeri 1 Denpasar", year: "2020 \u2013 2023", desc: "Mempelajari rekayasa, basis data, dan praktik terbaik dalam pengembangan aplikasi perangkat lunak." }
 ];
+
+// Fetch Data dari Supabase
+const { data: skills } = await useAsyncData('skills', async () => {
+  const { data, error } = await supabase.from('skills').select('name')
+  if (error || !data || data.length === 0) return defaultSkills;
+  return data.map(s => s.name);
+}, { default: () => defaultSkills });
+
+const { data: experiences } = await useAsyncData('experiences', async () => {
+  const { data, error } = await supabase.from('experiences').select('role, company, year, desc').order('id', { ascending: false })
+  if (error || !data || data.length === 0) return defaultExperiences;
+  return data;
+}, { default: () => defaultExperiences });
+
+const { data: education } = await useAsyncData('education', async () => {
+  const { data, error } = await supabase.from('education').select('role, company, year, desc').order('id', { ascending: false })
+  if (error || !data || data.length === 0) return defaultEducation;
+  return data;
+}, { default: () => defaultEducation });
 </script>
 
 <template>
