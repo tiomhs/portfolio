@@ -26,13 +26,13 @@ const { data: skills } = await useAsyncData('skills', async () => {
 }, { default: () => defaultSkills });
 
 const { data: experiences } = await useAsyncData('experiences', async () => {
-  const { data, error } = await supabase.from('experiences').select('role, company, year, desc').order('id', { ascending: false })
+  const { data, error } = await supabase.from('experiences').select('role, company, year, description').order('id', { ascending: false })
   if (error || !data || data.length === 0) return defaultExperiences;
   return data;
 }, { default: () => defaultExperiences });
 
 const { data: education } = await useAsyncData('education', async () => {
-  const { data, error } = await supabase.from('education').select('role, company, year, desc').order('id', { ascending: false })
+  const { data, error } = await supabase.from('education').select('role, company, year, description').order('id', { ascending: false })
   if (error || !data || data.length === 0) return defaultEducation;
   return data;
 }, { default: () => defaultEducation });
@@ -150,7 +150,7 @@ const { data: education } = await useAsyncData('education', async () => {
                 <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 w-fit shrink-0">{{ exp.year }}</span>
               </div>
               <p class="text-amber-500 font-medium mb-3 relative z-10">{{ exp.company }}</p>
-              <p class="text-slate-400 text-sm leading-relaxed relative z-10">{{ exp.desc }}</p>
+              <p class="text-slate-400 text-sm leading-relaxed relative z-10">{{ exp.description }}</p>
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@ const { data: education } = await useAsyncData('education', async () => {
                 <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 w-fit shrink-0">{{ edu.year }}</span>
               </div>
               <p class="text-amber-500 font-medium mb-3 relative z-10">{{ edu.company }}</p>
-              <p class="text-slate-400 text-sm leading-relaxed relative z-10">{{ edu.desc }}</p>
+              <p class="text-slate-400 text-sm leading-relaxed relative z-10">{{ edu.description }}</p>
             </div>
           </div>
         </div>
