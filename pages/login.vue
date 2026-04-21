@@ -61,7 +61,7 @@ const handleLogin = async () => {
     if (error) throw error
     
     // Sukses login
-    router.push('/admin')
+    await navigateTo('/admin')
   } catch (error) {
     errorMsg.value = error.message.includes('Invalid login credentials') 
         ? 'Kredensial tidak valid. Silakan cek kembali email dan password Anda.'

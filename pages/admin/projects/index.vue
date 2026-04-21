@@ -74,11 +74,32 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
+
+        <div v-if="errorMessage" class="mx-6 mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+          {{ errorMessage }}
+        </div>
         
         <form @submit.prevent="saveItem" class="p-6 space-y-5">
-          <div>
-            <label class="block text-sm font-medium text-zinc-400 mb-1.5">Judul Proyek</label>
-            <input v-model="form.title" type="text" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Judul Proyek</label>
+              <input v-model="form.title" type="text" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Slug (URL friendly)</label>
+              <input v-model="form.slug" type="text" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" placeholder="misal: pemira-co-id" />
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Subtitle (Tagline)</label>
+              <input v-model="form.subtitle" type="text" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" placeholder="misal: Platform E-Voting" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Role (Peran Anda)</label>
+              <input v-model="form.role" type="text" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" placeholder="misal: Front-End & Back-End Developer" />
+            </div>
           </div>
           
           <div>
@@ -141,10 +162,14 @@ const loading = ref(true)
 const isModalOpen = ref(false)
 const isEditing = ref(false)
 const saving = ref(false)
+const errorMessage = ref('')
 
 const form = ref({
   id: null,
   title: '',
+  slug: '',
+  subtitle: '',
+  role: '',
   description: '',
   tech_stack_input: '',
   github_url: '',
@@ -164,6 +189,18 @@ onMounted(() => {
   fetchProjects()
 })
 
+// Auto-generate slug from title
+watch(() => form.value.title, (newTitle) => {
+  if (!isEditing.value) {
+    form.value.slug = newTitle
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Hapus karakter non-word
+      .replace(/\s+/g, '-')      // Ganti spasi dengan -
+      .replace(/-+/g, '-')       // Hapus- ganda
+      .trim()
+  }
+})
+
 const openModal = (item = null) => {
   if (item) {
     isEditing.value = true
@@ -177,6 +214,9 @@ const openModal = (item = null) => {
     form.value = {
       id: null,
       title: '',
+      slug: '',
+      subtitle: '',
+      role: '',
       description: '',
       tech_stack_input: '',
       github_url: '',
@@ -190,6 +230,7 @@ const openModal = (item = null) => {
 
 const closeModal = () => {
   isModalOpen.value = false
+  errorMessage.value = ''
 }
 
 const saveItem = async () => {
@@ -207,6 +248,9 @@ const saveItem = async () => {
 
     const payload = {
       title: form.value.title,
+      slug: form.value.slug,
+      subtitle: form.value.subtitle,
+      role: form.value.role,
       description: form.value.description,
       tech_stack: techStackArray,
       github_url: form.value.github_url,
@@ -215,17 +259,26 @@ const saveItem = async () => {
       is_featured: form.value.is_featured
     }
 
+    errorMessage.value = ''
+
+    let result
     if (isEditing.value) {
-      await supabase.from('projects').update(payload).eq('id', form.value.id)
+      result = await supabase.from('projects').update(payload).eq('id', form.value.id)
     } else {
-      await supabase.from('projects').insert([payload])
+      result = await supabase.from('projects').insert([payload])
     }
     
+    if (result.error) {
+      errorMessage.value = `Gagal menyimpan: ${result.error.message}`
+      console.error('Supabase error:', result.error)
+      return
+    }
+
     closeModal()
     fetchProjects()
   } catch (error) {
-    console.error(error)
-    alert("Gagal menyimpan data")
+    console.error('Unexpected error:', error)
+    errorMessage.value = "Terjadi kesalahan sistem saat menyimpan data"
   } finally {
     saving.value = false
   }
@@ -233,8 +286,12 @@ const saveItem = async () => {
 
 const deleteItem = async (id) => {
   if (confirm('Yakin ingin menghapus proyek ini?')) {
-    await supabase.from('projects').delete().eq('id', id)
-    fetchProjects()
+    const { error } = await supabase.from('projects').delete().eq('id', id)
+    if (error) {
+      alert(`Gagal menghapus: ${error.message}`)
+    } else {
+      fetchProjects()
+    }
   }
 }
 </script>

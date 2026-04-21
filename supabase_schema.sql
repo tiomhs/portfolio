@@ -1,10 +1,14 @@
 -- Skema Database untuk Dashboard Portofolio Tio Mahesa
 -- Jalankan kode ini di fitur "SQL Editor" pada Supabase Dashboard Anda.
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Table: projects
 CREATE TABLE IF NOT EXISTS projects (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    subtitle VARCHAR(255),
+    role VARCHAR(255),
     description TEXT,
     tech_stack TEXT[], -- array of strings e.g. ['Vue.js', 'Tailwind']
     github_url VARCHAR(255),

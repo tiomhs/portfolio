@@ -61,6 +61,10 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
+
+        <div v-if="errorMessage" class="mx-6 mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+          {{ errorMessage }}
+        </div>
         
         <form @submit.prevent="saveItem" class="p-6 space-y-5">
           <div>
@@ -103,6 +107,7 @@ const loading = ref(true)
 const isModalOpen = ref(false)
 const isEditing = ref(false)
 const saving = ref(false)
+const errorMessage = ref('')
 
 const form = ref({ id: null, role: '', company: '', year: '', description: '' })
 
@@ -121,21 +126,35 @@ const openModal = (item = null) => {
   isModalOpen.value = true
 }
 
-const closeModal = () => isModalOpen.value = false
+const closeModal = () => {
+  isModalOpen.value = false
+  errorMessage.value = ''
+}
 
 const saveItem = async () => {
   saving.value = true
+  errorMessage.value = ''
   try {
     const payload = { role: form.value.role, company: form.value.company, year: form.value.year, description: form.value.description }
+    
+    let result
     if (isEditing.value) {
-      await supabase.from('education').update(payload).eq('id', form.value.id)
+      result = await supabase.from('education').update(payload).eq('id', form.value.id)
     } else {
-      await supabase.from('education').insert([payload])
+      result = await supabase.from('education').insert([payload])
     }
+
+    if (result.error) {
+      errorMessage.value = `Gagal menyimpan: ${result.error.message}`
+      console.error('Supabase error:', result.error)
+      return
+    }
+
     closeModal()
     fetchEducation()
   } catch (err) {
-    alert("Gagal menyimpan data")
+    console.error('Unexpected error:', err)
+    errorMessage.value = "Terjadi kesalahan sistem saat menyimpan data"
   } finally {
     saving.value = false
   }
@@ -143,8 +162,12 @@ const saveItem = async () => {
 
 const deleteItem = async (id) => {
   if (confirm('Hapus institusi ini?')) {
-    await supabase.from('education').delete().eq('id', id)
-    fetchEducation()
+    const { error } = await supabase.from('education').delete().eq('id', id)
+    if (error) {
+      alert(`Gagal menghapus: ${error.message}`)
+    } else {
+      fetchEducation()
+    }
   }
 }
 </script>
