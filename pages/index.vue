@@ -10,6 +10,16 @@ const { data: experiences } = await useAsyncData('experiences', async () => {
 
 const { data: featuredProjects } = await useAsyncData('featured-projects', () => getFeaturedProjects())
 
+const { data: latestBlogs } = await useAsyncData('latest-blogs', async () => {
+  const { data } = await supabase
+    .from('blogs')
+    .select('*')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false })
+    .limit(3)
+  return data || []
+})
+
 useHead({
   title: 'Tio Mahesa | Portfolio 2025',
   link: [
@@ -39,7 +49,7 @@ const projectColors = [
 <template>
   <div class="min-h-screen bg-white text-zinc-900 font-['Inter'] selection:bg-amber-100 pb-32 overflow-x-hidden">
     <!-- Hero Section -->
-    <section class="relative pt-20 pb-32 flex flex-col items-center justify-center text-center">
+    <section class="relative pt-32 pb-32 flex flex-col items-center justify-center text-center">
        <div class="relative">
           <h1 class="text-[12rem] md:text-[20rem] font-['Passion_One'] font-black leading-[0.75] tracking-tighter text-black select-none">
             PORT<br/>FOLIO
@@ -63,7 +73,7 @@ const projectColors = [
           <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-px h-32 bg-zinc-200"></div>
           <div class="relative bg-white p-4 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-zinc-100 rotate-[-3deg] group-hover:rotate-0 transition-transform duration-500 max-w-[320px] mx-auto">
              <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-50 mb-4">
-                <img src="/id_card_photo_1776863825924.png" class="w-full h-full object-cover" />
+                <img src="/profile.jpg" class="w-full h-full object-cover" />
              </div>
              <div class="text-center pb-2">
                 <div class="h-1.5 w-12 bg-zinc-100 rounded-full mx-auto mb-3"></div>
@@ -120,10 +130,10 @@ const projectColors = [
     <!-- Projects Section -->
     <section class="max-w-7xl mx-auto px-4 pb-40">
        <div class="text-center mb-24 relative">
-          <h2 class="text-[12rem] md:text-[18rem] font-['Passion_One'] leading-none text-transparent border-text select-none">CONTENT</h2>
+          <h2 class="text-[10rem] md:text-[18rem] font-['Passion_One'] leading-none text-transparent border-text select-none uppercase">Works</h2>
           <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-             <div class="grid grid-cols-3 md:grid-cols-5 gap-20 opacity-20">
-                <span v-for="i in 5" :key="i" class="text-4xl md:text-6xl font-['Passion_One'] text-amber-600">0{{ i }}</span>
+             <div class="grid grid-cols-5 gap-4 md:gap-20 opacity-20">
+                <span v-for="i in 5" :key="i" class="text-2xl md:text-6xl font-['Passion_One'] text-amber-600">0{{ i }}</span>
              </div>
           </div>
        </div>
@@ -147,6 +157,32 @@ const projectColors = [
           </NuxtLink>
        </div>
     </section>
+
+    <!-- Blog Section -->
+    <section class="max-w-7xl mx-auto px-4 pb-40">
+       <div class="text-center mb-24 relative">
+          <h2 class="text-[10rem] md:text-[18rem] font-['Passion_One'] leading-none text-transparent border-text select-none uppercase">Journal</h2>
+       </div>
+
+       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
+          <NuxtLink v-for="blog in latestBlogs" :key="blog.id" :to="`/blog/${blog.slug}`" class="group">
+             <div class="aspect-video rounded-3xl overflow-hidden bg-zinc-50 border border-zinc-100 mb-8 relative">
+                <img v-if="blog.cover_image" :src="blog.cover_image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-amber-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+             </div>
+             <div class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-3">{{ blog.category }}</div>
+             <h4 class="text-2xl font-black text-zinc-900 mb-4 group-hover:text-amber-600 transition-colors leading-tight tracking-tighter">{{ blog.title }}</h4>
+             <p class="text-sm text-zinc-500 line-clamp-2 leading-relaxed italic">"{{ blog.excerpt }}"</p>
+          </NuxtLink>
+       </div>
+
+       <div class="mt-20 text-center">
+          <NuxtLink to="/blog" class="inline-flex items-center gap-4 text-zinc-900 font-black text-xs uppercase tracking-[0.4em] hover:text-amber-600 transition-all group">
+             Read Full Journal
+             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-7 7m7-7H3"></path></svg>
+          </NuxtLink>
+       </div>
+    </section>
   </div>
 </template>
 
@@ -156,7 +192,7 @@ const projectColors = [
 }
 
 @media (max-width: 768px) {
-  h1 { font-size: 8rem; }
-  .border-text { font-size: 8rem; }
+  h1 { font-size: 6rem; }
+  .border-text { font-size: 6rem; }
 }
 </style>

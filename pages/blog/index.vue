@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen pb-32">
+  <div class="min-h-screen pb-32 pt-24">
     <main class="max-w-6xl mx-auto px-4 py-20 md:py-32">
       <!-- Header -->
       <header class="mb-24 text-center max-w-3xl mx-auto">

@@ -11,7 +11,7 @@ useHead({
 </script>
 
 <template>
-  <div class="min-h-screen pb-32 px-4 md:px-0">
+  <div class="min-h-screen pb-32 px-4 md:px-0 pt-24">
     <!-- Header -->
     <header class="relative pt-12 md:pt-24 pb-20 text-center">
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-amber-500/5 rounded-full blur-[120px] -z-10"></div>
