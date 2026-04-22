@@ -113,9 +113,36 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-zinc-400 mb-1.5">URL Gambar (Pisahkan dengan baris / enter)</label>
-            <textarea v-model="form.image_urls_input" rows="3" placeholder="https://example.com/img1.png&#13;&#10;https://example.com/img2.png" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"></textarea>
-            <p class="text-xs text-zinc-500 mt-1">Anda bisa memasukkan lebih dari 1 link gambar untuk carousel.</p>
+            <label class="block text-sm font-medium text-zinc-400 mb-3">Galeri Proyek (Gambar)</label>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+              <!-- Image Previews -->
+              <div v-for="(url, index) in form.image_urls" :key="index" class="relative group aspect-video rounded-xl overflow-hidden border border-white/10 bg-zinc-950">
+                <img :src="url" class="w-full h-full object-cover" />
+                <button type="button" @click="removeImage(index)" class="absolute top-1.5 right-1.5 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+
+              <!-- Upload Button Placeholder -->
+              <div class="relative aspect-video rounded-xl border-2 border-dashed border-zinc-800 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                <input type="file" @change="uploadImage" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" :disabled="uploadingImage" />
+                
+                <div v-if="!uploadingImage" class="flex flex-col items-center">
+                  <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center mb-1 group-hover:bg-amber-500/20 group-hover:text-amber-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                  </div>
+                  <span class="text-[10px] uppercase tracking-wider font-bold text-zinc-500 group-hover:text-zinc-300">Unggah Gambar</span>
+                </div>
+                
+                <div v-else class="flex flex-col items-center">
+                  <div class="w-8 h-8 border-3 border-zinc-700 border-t-amber-500 rounded-full animate-spin mb-2"></div>
+                  <span class="text-[10px] uppercase tracking-wider font-bold text-amber-500">Mengunggah...</span>
+                </div>
+              </div>
+            </div>
+            
+            <p class="text-xs text-zinc-500">Klik kotak di atas untuk mengunggah gambar baru ke Cloudinary. Gambar pertama akan menjadi thumbnail utama.</p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -162,7 +189,41 @@ const loading = ref(true)
 const isModalOpen = ref(false)
 const isEditing = ref(false)
 const saving = ref(false)
+const uploadingImage = ref(false)
 const errorMessage = ref('')
+
+const uploadImage = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  uploadingImage.value = true
+  const formData = new FormData()
+  formData.append('file', file)
+
+  try {
+    const data = await $fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+    
+    if (data && data.url) {
+      if (!form.value.image_urls) {
+        form.value.image_urls = []
+      }
+      form.value.image_urls.push(data.url)
+    }
+  } catch (err) {
+    console.error('Upload failed:', err)
+    errorMessage.value = `Gagal mengunggah gambar: ${err.message}`
+  } finally {
+    uploadingImage.value = false
+    event.target.value = ''
+  }
+}
+
+const removeImage = (index) => {
+  form.value.image_urls.splice(index, 1)
+}
 
 const form = ref({
   id: null,
@@ -174,7 +235,7 @@ const form = ref({
   tech_stack_input: '',
   github_url: '',
   live_url: '',
-  image_urls_input: '',
+  image_urls: [],
   is_featured: false
 })
 
@@ -207,7 +268,7 @@ const openModal = (item = null) => {
     form.value = { 
       ...item, 
       tech_stack_input: item.tech_stack ? item.tech_stack.join(', ') : '',
-      image_urls_input: item.image_urls ? item.image_urls.join('\n') : ''
+      image_urls: item.image_urls || []
     }
   } else {
     isEditing.value = false
@@ -221,7 +282,7 @@ const openModal = (item = null) => {
       tech_stack_input: '',
       github_url: '',
       live_url: '',
-      image_urls_input: '',
+      image_urls: [],
       is_featured: false
     }
   }
@@ -241,11 +302,6 @@ const saveItem = async () => {
       .map(t => t.trim())
       .filter(t => t.length > 0)
 
-    const imageUrlsArray = form.value.image_urls_input
-      .split('\n')
-      .map(t => t.trim())
-      .filter(t => t.length > 0)
-
     const payload = {
       title: form.value.title,
       slug: form.value.slug,
@@ -255,7 +311,7 @@ const saveItem = async () => {
       tech_stack: techStackArray,
       github_url: form.value.github_url,
       live_url: form.value.live_url,
-      image_urls: imageUrlsArray,
+      image_urls: form.value.image_urls,
       is_featured: form.value.is_featured
     }
 
