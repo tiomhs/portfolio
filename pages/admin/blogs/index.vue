@@ -82,8 +82,8 @@
     </div>
 
     <!-- Modal Form -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div class="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl">
+    <div v-if="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-4 flex justify-center items-start">
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-4xl my-8 shadow-2xl relative">
         <div class="p-6 border-b border-white/5 flex justify-between items-center sticky top-0 bg-zinc-900 z-10">
           <h3 class="text-xl font-bold text-white">{{ isEditing ? 'Edit Artikel' : 'Tulis Artikel Baru' }}</h3>
           <button @click="closeModal()" class="text-zinc-500 hover:text-white transition-colors">
@@ -232,6 +232,15 @@ const fetchBlogs = async () => {
 
 onMounted(() => {
   fetchBlogs()
+})
+
+// Prevent body scroll when modal is open
+watch(isModalOpen, (val) => {
+  if (val) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
 })
 
 // Auto-generate slug from title
