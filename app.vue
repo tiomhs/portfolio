@@ -18,7 +18,7 @@ useHead({
 
 <style>
 body {
-  @apply bg-[#0a0a0a];
+  @apply bg-white;
   margin: 0;
 }
 

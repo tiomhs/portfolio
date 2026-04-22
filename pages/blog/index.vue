@@ -1,100 +1,77 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-amber-900 selection:text-white">
-    <Navbar />
-    
-    <main class="max-w-6xl mx-auto px-6 py-24">
+  <div class="min-h-screen pb-32">
+    <main class="max-w-6xl mx-auto px-4 py-20 md:py-32">
       <!-- Header -->
-      <header class="mb-16 text-center max-w-2xl mx-auto">
-        <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">Jurnal <span class="text-amber-500">&</span> Artikel</h1>
-        <p class="text-zinc-400 text-lg">Berbagi pemikiran, tutorial, dan pengalaman seputar pengembangan web dan teknologi terbaru.</p>
+      <header class="mb-24 text-center max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-xl shadow-zinc-200/50 border border-zinc-100 text-amber-600 text-[10px] font-black uppercase tracking-[0.3em] mb-8">
+           <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+           Knowledge Base
+        </div>
+        <h1 class="text-5xl md:text-8xl font-black text-zinc-900 tracking-tighter mb-8 leading-none">
+          Journal & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-700">Insights</span>
+        </h1>
+        <p class="text-zinc-500 text-lg md:text-xl font-medium leading-relaxed italic">"Documenting the architecture of systems and the philosophy of development."</p>
       </header>
 
-      <!-- Categories Filter (Simplified) -->
-      <div class="flex flex-wrap justify-center gap-3 mb-12">
+      <!-- Filter -->
+      <div class="flex flex-wrap justify-center gap-3 mb-24">
         <button 
-          @click="selectedCategory = 'All'" 
-          :class="selectedCategory === 'All' ? 'bg-amber-500 text-zinc-950 border-amber-500' : 'bg-zinc-900 text-zinc-400 border-white/5 hover:border-amber-500/50'"
-          class="px-5 py-2 rounded-full text-sm font-semibold border transition-all shadow-lg"
-        >
-          Semua
-        </button>
-        <button 
-          v-for="cat in categories" :key="cat"
+          v-for="cat in ['All', ...categories]" :key="cat"
           @click="selectedCategory = cat" 
-          :class="selectedCategory === cat ? 'bg-amber-500 text-zinc-950 border-amber-500' : 'bg-zinc-900 text-zinc-400 border-white/5 hover:border-amber-500/50'"
-          class="px-5 py-2 rounded-full text-sm font-semibold border transition-all shadow-lg"
+          :class="selectedCategory === cat ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-400/20' : 'bg-white text-zinc-400 hover:text-zinc-900 shadow-md border border-zinc-100'"
+          class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
         >
           {{ cat }}
         </button>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="i in 6" :key="i" class="bg-zinc-900/50 rounded-3xl p-4 border border-white/5 animate-pulse">
-          <div class="aspect-video bg-zinc-800 rounded-2xl mb-4"></div>
-          <div class="h-6 bg-zinc-800 rounded w-3/4 mb-3"></div>
-          <div class="h-4 bg-zinc-800 rounded w-full mb-2"></div>
-          <div class="h-4 bg-zinc-800 rounded w-1/2"></div>
-        </div>
+      <!-- Loading -->
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div v-for="i in 6" :key="i" class="bg-zinc-50 rounded-[2.5rem] animate-pulse h-[450px]"></div>
       </div>
 
-      <!-- Blog Grid -->
-      <div v-else-if="filteredBlogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Grid -->
+      <div v-else-if="filteredBlogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         <NuxtLink 
           v-for="blog in filteredBlogs" 
           :key="blog.id" 
           :to="`/blog/${blog.slug}`"
-          class="group bg-zinc-900/30 hover:bg-zinc-900/50 rounded-3xl p-4 border border-white/5 hover:border-amber-500/30 transition-all flex flex-col h-full shadow-xl hover:shadow-amber-500/5"
+          class="group flex flex-col h-full bg-white rounded-[3rem] border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40 hover:-translate-y-4 hover:shadow-2xl transition-all duration-500"
         >
-          <!-- Cover -->
-          <div class="aspect-video rounded-2xl overflow-hidden mb-6 relative">
+          <div class="aspect-[16/10] rounded-[2rem] overflow-hidden mb-8 relative bg-zinc-50">
             <img 
               v-if="blog.cover_image" 
               :src="blog.cover_image" 
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" 
             />
-            <div v-else class="w-full h-full bg-zinc-800 flex items-center justify-center text-zinc-600">
-               <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-            </div>
-            <div class="absolute top-3 left-3 px-3 py-1 bg-amber-500 text-zinc-950 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg">
-               {{ blog.category }}
-            </div>
+            <div class="absolute inset-0 bg-amber-900/5 group-hover:opacity-0 transition-opacity"></div>
           </div>
 
-          <!-- Content -->
           <div class="flex-grow flex flex-col">
-            <div class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
-               <span class="w-1 h-1 rounded-full bg-amber-500"></span>
-               {{ new Date(blog.published_at || blog.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest">{{ blog.category }}</span>
+              <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{{ new Date(blog.published_at || blog.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) }}</span>
             </div>
-            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-amber-500 transition-colors leading-tight">{{ blog.title }}</h3>
-            <p class="text-zinc-400 text-sm line-clamp-3 leading-relaxed mb-6">{{ blog.excerpt }}</p>
+            <h3 class="text-3xl font-black text-zinc-900 mb-4 group-hover:text-amber-600 transition-colors leading-tight tracking-tighter">{{ blog.title }}</h3>
+            <p class="text-zinc-500 text-sm line-clamp-3 leading-relaxed mb-10 font-medium italic">"{{ blog.excerpt }}"</p>
             
-            <div class="mt-auto flex items-center justify-between">
-              <div class="flex flex-wrap gap-2">
-                 <span v-for="tag in blog.tags?.slice(0, 2)" :key="tag" class="text-[10px] text-zinc-500 italic">#{{ tag }}</span>
+            <div class="mt-auto flex items-center justify-between pt-8 border-t border-zinc-50">
+              <div class="flex flex-wrap gap-3">
+                 <span v-for="tag in blog.tags?.slice(0, 2)" :key="tag" class="text-[9px] text-zinc-300 font-black uppercase tracking-widest">#{{ tag }}</span>
               </div>
-              <div class="text-amber-500 text-xs font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                Baca Selengkapnya
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              <div class="text-zinc-900 text-[10px] font-black uppercase tracking-widest group-hover:text-amber-600 transition-all flex items-center gap-1">
+                Open Article
+                <svg class="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </div>
             </div>
           </div>
         </NuxtLink>
       </div>
 
-      <!-- Empty State -->
-      <div v-else class="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-zinc-800">
-        <p class="text-zinc-500">Belum ada artikel yang dipublikasikan untuk kategori ini.</p>
+      <div v-else class="text-center py-40 bg-zinc-50 rounded-[3rem] border border-dashed border-zinc-200">
+        <p class="text-zinc-400 font-bold uppercase tracking-widest">No articles found.</p>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-white/5 py-12 bg-zinc-950">
-       <div class="max-w-6xl mx-auto px-6 text-center">
-          <p class="text-zinc-500 text-sm">© {{ new Date().getFullYear() }} Tio Mahesa. All rights reserved.</p>
-       </div>
-    </footer>
   </div>
 </template>
 
@@ -103,12 +80,11 @@ const supabase = useSupabaseClient()
 const blogs = ref([])
 const loading = ref(true)
 const selectedCategory = ref('All')
-
 const categories = ['Tech', 'Dev', 'Design', 'Life', 'Tutorial']
 
 const fetchBlogs = async () => {
   loading.value = true
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('blogs')
     .select('*')
     .eq('is_published', true)
@@ -128,9 +104,6 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Blog | Tio Mahesa',
-  meta: [
-    { name: 'description', content: 'Kumpulan artikel dan jurnal teknologi oleh Tio Mahesa.' }
-  ]
+  title: 'Journal | Tio Mahesa',
 })
 </script>

@@ -1,84 +1,85 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-amber-900 selection:text-white">
-    <Navbar />
-    
-    <main v-if="blog" class="relative">
-      <!-- Hero Section with Cover Image -->
-      <div class="h-[60vh] relative overflow-hidden flex items-end">
+  <div class="min-h-screen pb-32">
+    <div v-if="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+      <div class="w-10 h-10 border-4 border-zinc-100 border-t-amber-500 rounded-full animate-spin"></div>
+    </div>
+
+    <main v-else-if="blog" class="relative">
+      <!-- Article Hero -->
+      <div class="min-h-[70vh] relative overflow-hidden flex items-end pt-32">
         <div class="absolute inset-0 z-0">
           <img 
             v-if="blog.cover_image" 
             :src="blog.cover_image" 
-            class="w-full h-full object-cover blur-[2px] scale-105 opacity-40" 
+            class="w-full h-full object-cover blur-[8px] scale-110 opacity-30" 
           />
-          <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#fafaf9] via-[#fafaf9]/80 to-transparent"></div>
         </div>
 
-        <div class="max-w-4xl mx-auto px-6 w-full pb-16 relative z-10">
-          <div class="flex items-center gap-3 mb-6">
-            <span class="px-3 py-1 bg-amber-500 text-zinc-950 text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
+        <div class="max-w-4xl mx-auto px-4 w-full pb-20 relative z-10">
+          <NuxtLink to="/blog" class="inline-flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors mb-10 group text-[10px] font-black uppercase tracking-widest">
+            <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to Journal
+          </NuxtLink>
+          
+          <div class="flex items-center gap-4 mb-8">
+            <span class="px-6 py-2 bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-amber-500/20">
               {{ blog.category }}
             </span>
-            <span class="text-zinc-500 text-xs uppercase tracking-widest font-bold">
-               {{ new Date(blog.published_at || blog.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+            <span class="text-zinc-400 text-[10px] font-black uppercase tracking-widest">
+               {{ new Date(blog.published_at || blog.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
             </span>
           </div>
-          <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight mb-4">
+          
+          <h1 class="text-5xl md:text-8xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-10">
             {{ blog.title }}
           </h1>
-          <p class="text-xl text-zinc-400 font-light max-w-2xl leading-relaxed">
-            {{ blog.excerpt }}
+          <p class="text-xl md:text-3xl text-zinc-500 font-medium max-w-3xl leading-relaxed italic border-l-4 border-amber-500 pl-8">
+            "{{ blog.excerpt }}"
           </p>
         </div>
       </div>
 
       <!-- Article Content -->
-      <article class="max-w-4xl mx-auto px-6 py-16">
-        <div class="bg-zinc-900/20 border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-           <!-- Texture -->
-           <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.015]" style="background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 1px, transparent 20px);"></div>
-           
-           <div class="relative z-10 prose prose-invert prose-amber prose-lg max-w-none prose-headings:text-white prose-headings:tracking-tight prose-a:text-amber-500 prose-strong:text-zinc-100 prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-white/5 prose-pre:rounded-2xl prose-img:rounded-3xl">
-              <!-- Content Rendering (Simplified Markdown style) -->
-              <div class="whitespace-pre-wrap leading-relaxed">{{ blog.content }}</div>
+      <article class="max-w-4xl mx-auto px-4 py-24">
+        <div class="relative">
+           <div class="relative z-10 prose prose-amber prose-xl max-w-none 
+              prose-headings:text-zinc-900 prose-headings:tracking-tighter prose-headings:font-black
+              prose-a:text-amber-600 prose-strong:text-zinc-900 prose-p:text-zinc-500 prose-p:leading-relaxed
+              prose-img:rounded-[2.5rem] prose-img:shadow-2xl prose-img:border prose-img:border-zinc-100
+              prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-3xl prose-pre:p-10 prose-pre:shadow-2xl">
+              
+              <div class="whitespace-pre-wrap leading-[1.8] font-medium">{{ blog.content }}</div>
            </div>
 
            <!-- Tags -->
-           <div v-if="blog.tags?.length" class="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-2">
-              <span v-for="tag in blog.tags" :key="tag" class="px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-500 font-medium">
+           <div v-if="blog.tags?.length" class="mt-32 pt-16 border-t border-zinc-100 flex flex-wrap gap-3">
+              <span v-for="tag in blog.tags" :key="tag" class="px-6 py-2.5 bg-zinc-50 border border-zinc-100 rounded-2xl text-[10px] text-zinc-400 font-black uppercase tracking-widest hover:text-amber-600 hover:border-amber-500/30 transition-all cursor-default">
                 #{{ tag }}
               </span>
            </div>
         </div>
 
-        <!-- Back Link -->
-        <div class="mt-12 text-center">
-           <NuxtLink to="/blog" class="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors group">
-              <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-              Kembali ke Blog
+        <!-- Footer Card -->
+        <div class="mt-32 p-12 md:p-20 rounded-[4rem] bg-white border border-zinc-100 shadow-2xl shadow-zinc-200/50 flex flex-col items-center text-center relative overflow-hidden">
+           <div class="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-amber-500 to-orange-600"></div>
+           
+           <div class="w-24 h-24 rounded-3xl bg-zinc-950 flex items-center justify-center mb-10 shadow-xl rotate-3 group hover:rotate-0 transition-transform">
+              <span class="text-3xl font-black text-white">TM</span>
+           </div>
+           <h4 class="text-3xl font-black text-zinc-900 mb-4 tracking-tighter">I Gede Tio Mahesa Diputra</h4>
+           <p class="text-zinc-500 text-lg max-w-sm mb-12 font-medium leading-relaxed italic">"Simplicity is the ultimate sophistication in software design."</p>
+           
+           <NuxtLink to="/blog" class="inline-flex items-center gap-4 text-amber-600 font-black text-[10px] uppercase tracking-[0.4em] hover:tracking-[0.5em] transition-all group">
+              <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Return to Journal Index
            </NuxtLink>
         </div>
       </article>
     </main>
 
-    <!-- Not Found State -->
-    <div v-else-if="!loading" class="min-h-screen flex items-center justify-center">
-       <div class="text-center">
-          <h2 class="text-2xl font-bold text-white mb-4">Artikel Tidak Ditemukan</h2>
-          <NuxtLink to="/blog" class="text-amber-500 hover:underline">Kembali ke Blog</NuxtLink>
-       </div>
-    </div>
-
-    <!-- Loading State -->
-    <div v-else class="min-h-screen flex items-center justify-center">
-       <div class="w-12 h-12 border-4 border-zinc-800 border-t-amber-500 rounded-full animate-spin"></div>
-    </div>
-
-    <footer class="border-t border-white/5 py-12 bg-zinc-950">
-       <div class="max-w-4xl mx-auto px-6 text-center">
-          <p class="text-zinc-500 text-sm">© {{ new Date().getFullYear() }} Tio Mahesa. All rights reserved.</p>
-       </div>
-    </footer>
+    <!-- Scroll Progress -->
+    <div class="fixed top-0 left-0 h-1 bg-amber-500 z-[100] transition-all duration-300" :style="{ width: scrollPercent + '%' }"></div>
   </div>
 </template>
 
@@ -87,46 +88,39 @@ const route = useRoute()
 const supabase = useSupabaseClient()
 const blog = ref(null)
 const loading = ref(true)
+const scrollPercent = ref(0)
 
 const fetchBlog = async () => {
   loading.value = true
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('blogs')
     .select('*')
     .eq('slug', route.params.slug)
     .eq('is_published', true)
     .single()
   
-  if (data) {
-    blog.value = data
-  }
+  if (data) blog.value = data
   loading.value = false
+}
+
+const handleScroll = () => {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight
+  scrollPercent.value = (winScroll / height) * 100
 }
 
 onMounted(() => {
   fetchBlog()
+  window.addEventListener('scroll', handleScroll)
 })
 
-// SEO
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+
 watch(blog, (newBlog) => {
   if (newBlog) {
-    useHead({
-      title: `${newBlog.title} | Tio Mahesa Blog`,
-      meta: [
-        { name: 'description', content: newBlog.excerpt },
-        { property: 'og:title', content: newBlog.title },
-        { property: 'og:description', content: newBlog.excerpt },
-        { property: 'og:image', content: newBlog.cover_image },
-        { name: 'twitter:card', content: 'summary_large_image' }
-      ]
-    })
+    useHead({ title: `${newBlog.title} | Journal` })
   }
 })
 </script>
-
-<style>
-/* Custom prose styles if needed */
-.prose pre {
-  padding: 1.5rem !important;
-}
-</style>
